@@ -25,19 +25,19 @@ class DataBaseMethods:
 
     # Adds a data object to database
     @staticmethod
-    def add_object(db: Session, new_object):
+    def add_object(db: Session, new_object: DBTask) -> DBTask:
         """
         Adds a database object to the database.
 
         Args:
             db (Session): Database session,
             can be grabbed with get_db()
-            new_object (database_objects): New
+            new_object (DBTask): New
             database object to be added
             must be inside the database_objects.py module
 
         Returns:
-            database_object: returns the entered object
+            DBTask: returns the entered object
              if it was successfully added
         """
         try:
@@ -54,13 +54,13 @@ class DataBaseMethods:
 
     # deletes a data object from database
     @staticmethod
-    def delete_object(db: Session, object_to_delete):
+    def delete_object(db: Session, object_to_delete: DBTask) -> bool:
         """
         Deletes a database object from the database.
 
         Args:
             db (Session): Database session, can be grabbed with get_db()
-            object_to_delete (database_objects): New database object to be added
+            object_to_delete (DBTask): New database object to be added
             must be inside the database_objects.py module
 
         Returns:
@@ -80,18 +80,18 @@ class DataBaseMethods:
 
     # Gets an object by Name from the database
     @staticmethod
-    def get_object_by_name(db: Session, obj_ref, name: str):
+    def get_object_by_name(db: Session, obj_ref, name: str) -> DBTask | None:
         """
         Gets an object based on the name entered.
 
         Args:
             db (Session): Database session, can be grabbed with get_db()
             name (string): Name of the object
-            obj_ref (database_objects): Object reference, so an object from
+            obj_ref (DBTask): Object reference, so an object from
             the database_objects.py module
 
         Returns:
-            database_object: returns the object if it was successfully found
+            DBTask: returns the object if it was successfully found, otherwise None
         """
         if not obj_ref.name:
             raise HTTPException(status_code=500,
@@ -106,18 +106,18 @@ class DataBaseMethods:
 
     # Gets an object by ID from the database, data object must have ID field
     @staticmethod
-    def get_object_by_id(db: Session, obj_ref, object_id: int):
+    def get_object_by_id(db: Session, obj_ref, object_id: int)-> DBTask | None:
         """
         Gets an object based on the id entered.
 
         Args:
             db (Session): Database session, can be grabbed with get_db()
             object_id (int): ID of the object
-            obj_ref (database_objects): Object reference, so an object from
+            obj_ref (DBTask): Object reference, so an object from
             the database_objects.py module
 
         Returns:
-            database_object: returns the object if it was successfully found
+            DBTask: returns the object if it was successfully found
         """
         try:
             param = obj_ref.id
@@ -127,7 +127,7 @@ class DataBaseMethods:
                           detail=f"Object with id: {id}, does not exist")
 
     @staticmethod
-    def query_db(db: Session, obj_ref, field: str, value):
+    def query_db(db: Session, obj_ref, field: str, value) -> list[DBTask]:
         if value is None:
             try:
                 return db.query(obj_ref).filter(obj_ref.id).all()
