@@ -1,8 +1,16 @@
+from __future__ import annotations
+
+import os
+from typing import TYPE_CHECKING
+
 from fastapi import HTTPException
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, declarative_base, sessionmaker
 
-Database_url = "sqlite:///./Database.db"
+if TYPE_CHECKING:
+    from app.data.database_objects import DBTask
+
+Database_url = os.getenv("DATABASE_URL", "sqlite:///./Database.db")
 Engine = create_engine(Database_url, connect_args={"check_same_thread": False})
 LocalSession = sessionmaker(bind=Engine, autocommit=False, autoflush=False)
 Base = declarative_base()
@@ -49,8 +57,9 @@ class DataBaseMethods:
             return new_object
         except Exception as err:
             db.rollback()
-            raise HTTPException(status_code=404,
-                                detail="Object already exists") from err
+            raise HTTPException(
+                status_code=404, detail="Object already exists"
+            ) from err
 
     # deletes a data object from database
     @staticmethod
@@ -75,8 +84,9 @@ class DataBaseMethods:
             return True
         except Exception as err:
             db.rollback()
-            raise HTTPException(status_code=404,
-                                detail=f"Object does not exist, {err}") from err
+            raise HTTPException(
+                status_code=404, detail=f"Object does not exist, {err}"
+            ) from err
 
     # Gets an object by Name from the database
     @staticmethod
@@ -94,19 +104,19 @@ class DataBaseMethods:
             DBTask: returns the object if it was successfully found, otherwise None
         """
         if not obj_ref.name:
-            raise HTTPException(status_code=500,
-                                detail="Object must have a name")
+            raise HTTPException(status_code=500, detail="Object must have a name")
 
         try:
             param = obj_ref.name
             return db.query(obj_ref).filter(param == name).first()
         except Exception:
-            HTTPException(status_code=404,
-                          detail=f"Object with name: {name}, does not exist")
+            HTTPException(
+                status_code=404, detail=f"Object with name: {name}, does not exist"
+            )
 
     # Gets an object by ID from the database, data object must have ID field
     @staticmethod
-    def get_object_by_id(db: Session, obj_ref, object_id: int)-> DBTask | None:
+    def get_object_by_id(db: Session, obj_ref, object_id: int) -> DBTask | None:
         """
         Gets an object based on the id entered.
 
@@ -123,8 +133,9 @@ class DataBaseMethods:
             param = obj_ref.id
             return db.query(obj_ref).filter(param == object_id).first()
         except Exception:
-            HTTPException(status_code=404,
-                          detail=f"Object with id: {id}, does not exist")
+            HTTPException(
+                status_code=404, detail=f"Object with id: {id}, does not exist"
+            )
 
     @staticmethod
     def query_db(db: Session, obj_ref, field: str, value) -> list[DBTask]:
@@ -132,17 +143,19 @@ class DataBaseMethods:
             try:
                 return db.query(obj_ref).filter(obj_ref.id).all()
             except Exception:
-                HTTPException(status_code=404,
-                              detail=f"Object with filed: {field},"
-                                     f" does not exist")
+                HTTPException(
+                    status_code=404,
+                    detail=f"Object with filed: {field}, does not exist",
+                )
         else:
             try:
                 param = getattr(obj_ref, field)
                 return db.query(obj_ref).filter(param == value).all()
             except Exception:
-                HTTPException(status_code=404,
-                              detail=f"Object with filed: {field},"
-                                     f" does not exist")
+                HTTPException(
+                    status_code=404,
+                    detail=f"Object with filed: {field}, does not exist",
+                )
 
 
 def get_session() -> Session:
@@ -167,7 +180,6 @@ def clear_table(session, db_object):
         print(f"Deleted {deleted} rows")
 
     except Exception as e:
-
         session.rollback()
 
         print("CLEAR ERROR:", e)
