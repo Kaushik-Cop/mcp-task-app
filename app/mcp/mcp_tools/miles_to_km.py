@@ -31,7 +31,7 @@ class MilestoKmResponse(BaseModel):
     audited_at: float
 
 
-def miles_to_kilometers_value(miles: float) -> float:
+def miles_to_kilometers_value(miles: float | None) -> float:
     """
     Convert miles to kilometers, rejecting negative inputs.
 
