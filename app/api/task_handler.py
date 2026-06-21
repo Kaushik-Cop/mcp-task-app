@@ -33,11 +33,7 @@ class TaskHandler:
     @classmethod
     def add_task_to_db(cls, db: Session, task: PLTask):
         """Creates a task and adds it to the misc."""
-<<<<<<< HEAD
         # print(db) # debug print
-=======
-        # print(db) # debug print
->>>>>>> upstream/main
         new_task_obj = DBTask(
             id=task.id or None,
             name=task.name,
