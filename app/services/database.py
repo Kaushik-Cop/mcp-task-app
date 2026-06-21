@@ -147,6 +147,7 @@ class DataBaseMethods:
                     status_code=404,
                     detail=f"Object with filed: {field}, does not exist",
                 )
+                return []
         else:
             try:
                 param = getattr(obj_ref, field)
@@ -156,6 +157,7 @@ class DataBaseMethods:
                     status_code=404,
                     detail=f"Object with filed: {field}, does not exist",
                 )
+                return []
 
 
 def get_session() -> Session:
