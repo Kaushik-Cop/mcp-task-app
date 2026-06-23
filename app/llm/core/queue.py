@@ -132,7 +132,7 @@ class AnyIOModelQueue:
 
     async def wait_for_result(
         self, job_id: str, poll_interval: float = 0.1, timeout: float = 10
-    ) -> LLMResponse:
+    ) -> LLMResponse | str:
         """Wait for a job to complete and return the result.
 
         Polls the job store until the job reaches a terminal state.
