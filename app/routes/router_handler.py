@@ -28,7 +28,6 @@ class Router:
                             module = module_from_spec(spec)
                             spec.loader.exec_module(module)
 
-
                 except (UnicodeDecodeError, PermissionError):
                     continue
 
