@@ -143,12 +143,14 @@ class AnyIOModelQueue:
             job = self._jobs.get(job_id)
             if isinstance(job, FinishedJob):
                 outcome = job.outcome
-                
+
                 if outcome.status == "ok":
                     if not isinstance(outcome.root, LLMResponse):
-                        raise TypeError(f"Expected LLMResponse, got {type(outcome.root).__name__}")
+                        raise TypeError(
+                            f"Expected LLMResponse, got {type(outcome.root).__name__}"
+                        )
                     return outcome.root
-                
+
                 raise ValueError(f"Job failed: {outcome.root}")
             if anyio.current_time() > deadline:
                 raise TimeoutError(f"Job {job_id} did not complete within {timeout}s")
