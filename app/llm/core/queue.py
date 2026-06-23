@@ -132,7 +132,7 @@ class AnyIOModelQueue:
 
     async def wait_for_result(
         self, job_id: str, poll_interval: float = 0.1, timeout: float = 10
-    ) -> LLMResponse | str:
+    ) -> LLMResponse:
         """Wait for a job to complete and return the result.
 
         Polls the job store until the job reaches a terminal state.
@@ -143,8 +143,12 @@ class AnyIOModelQueue:
             job = self._jobs.get(job_id)
             if isinstance(job, FinishedJob):
                 outcome = job.outcome
+                
                 if outcome.status == "ok":
+                    if not isinstance(outcome.root, LLMResponse):
+                        raise TypeError(f"Expected LLMResponse, got {type(outcome.root).__name__}")
                     return outcome.root
+                
                 raise ValueError(f"Job failed: {outcome.root}")
             if anyio.current_time() > deadline:
                 raise TimeoutError(f"Job {job_id} did not complete within {timeout}s")
