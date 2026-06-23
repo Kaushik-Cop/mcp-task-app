@@ -1,9 +1,6 @@
-"""
-Tests for the shared response helper.
-"""
+"""Tests for the shared response helper."""
 
-import pytest
-from app.utils.response_helper import build_success_response, build_error_response
+from app.utils.response_helper import build_error_response, build_success_response
 
 
 def test_build_success_response_has_ok_true():
