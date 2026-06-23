@@ -142,22 +142,20 @@ class DataBaseMethods:
         if value is None:
             try:
                 return db.query(obj_ref).filter(obj_ref.id).all()
-            except Exception:
-                HTTPException(
+            except Exception as err:
+                raise HTTPException(
                     status_code=404,
-                    detail=f"Object with filed: {field}, does not exist",
-                )
-                return []
+                    detail=f"Object with field: {field}, does not exist",
+                ) from err
         else:
             try:
                 param = getattr(obj_ref, field)
                 return db.query(obj_ref).filter(param == value).all()
-            except Exception:
-                HTTPException(
+            except Exception as err:
+                raise HTTPException(
                     status_code=404,
-                    detail=f"Object with filed: {field}, does not exist",
-                )
-                return []
+                    detail=f"Object with field: {field}, does not exist",
+                ) from err
 
 
 def get_session() -> Session:
